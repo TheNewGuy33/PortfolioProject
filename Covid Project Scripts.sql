@@ -1,11 +1,19 @@
-select* from coviddeaths
+
+-- Covid 19 Data Exploration --
+
+-- Skills Used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types --
+
+select* 
+from coviddeaths
 where continent is not null
 order by 3,4;
 
 select* from covidvaccinations
 order by 3,4;
 
--- Select data we are using--
+
+
+-- Select data we are starting with --
 
 select
 	location,
@@ -19,7 +27,8 @@ where continent is not null
 order by 1,2;
 
 
--- total cases vs deaths --
+
+-- Total Cases vs Population --
 -- Likelihood of dying if contract covid in country --
 
 select
@@ -31,6 +40,7 @@ select
 from coviddeaths
 where location like '%states%' and 
 continent is not null;
+
 
 
 -- total cases vs population --
@@ -45,7 +55,10 @@ from coviddeaths
 where location like '%states%' and
 continent is not null;
 
--- Looking at countries with highest infection rate compared to population --
+
+
+
+-- Countries with Highest Infection Rate compared to Population --
 
 select
 	Location,
@@ -59,7 +72,8 @@ group by location, population
 order by PercentagePopulationInfected desc;
 
 
--- Showing country with highest death count per population --
+
+-- Country with Highest Death Count per Population --
 
 select
 	Location,
@@ -71,10 +85,8 @@ group by location
 order by TotalDeathCount desc;
 
 
+
 -- LETS BREAK DOWN BY CONTINENT --	
-
-
-
 
 -- SHOWING CONTINENT WITH HIGHEST DEATH COUNT--
 
@@ -103,7 +115,7 @@ order by 1,2;
 
 
 -- Total population vs vaccinations--
-
+-- Percentage of Population that has received at least one Covid Vaccine --
 select
 	coviddeaths.continent,
 	coviddeaths.location,
@@ -120,7 +132,8 @@ where
 order by 2,3;
 
 
---USE CTE--
+
+-- USE CTE to perform Calculation on Partition in previous query --
 
 with popvsvac
 	(continenct,
@@ -150,7 +163,8 @@ select*,
 from popvsvac;
 
 
---TEMP TABLE--
+
+-- Using Temp Table to perform Calculation on Partition by in previous query --
 
 drop table if exists #PercentPopulationVaccinated
 Create Table #PercentPopulationVaccinated
@@ -183,9 +197,7 @@ from #PercentPopulationVaccinated
 
 
 
-
-
--- CREATING VIEW TO STORE FOR VISUALS --
+-- Creating View to store data for visualizations --
 
 Create view PercentPopulationVaccinated as
 select
