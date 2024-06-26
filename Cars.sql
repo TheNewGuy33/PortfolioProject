@@ -1,3 +1,7 @@
+-- Car Sales Dataset --
+-- Skills Used: CTE's, Windows Functions, Aggregate Functions, Groups, Order By --
+
+
 
 -- Select All Car Data --
 select* from cars;
