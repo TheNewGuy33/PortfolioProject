@@ -1,17 +1,12 @@
 
--- Select All Data --
-
+-- Select All Car Data --
 select* from cars;
-
-
 
 
 
 
 -- Total Cars Sold --
 -- Total Value --
-
-
 select
 	count(vin) as Total_Cars_Sold,
 	sum(sellingprice) Total_Value
@@ -19,10 +14,9 @@ from cars
 
 
 
-
+	
 -- Cars Sold Per Year --
 -- Revenue Per Year --
-
 select
 	year,
 	count(vin) as Cars_Sold,
@@ -36,8 +30,6 @@ order by year desc)
 
 -- Percent of Cars Sold --
 -- Percent of Revenue --
-
-
 with 
 car_totals as
 (select
@@ -65,7 +57,6 @@ order by year desc;
 
 
 -- Cars Sold Per Year --
-
 select
 	year,
 	count(vin) as SoldCars
@@ -76,10 +67,7 @@ order by year desc;
 
 
 
-
 -- Auto vs Manual --
-
-
 select
 	count(case when Transmission = 'manual' then Transmission end) as Manual_Cars,
 	count(case when Transmission = 'automatic' then Transmission end) as Automatic_Cars,
@@ -90,8 +78,6 @@ from cars;
 
 
 -- Auto sold per year vs manual sold per year --
-
-
 select
 	Year,
 	count(case when Transmission = 'manual' then Transmission end) as Manual_Cars,
@@ -103,9 +89,8 @@ order by year desc;
 
 
 
+
 -- Car make sold ranking --
-
-
 select
 	make,
 	count(make) Total_Sold
@@ -117,8 +102,6 @@ order by Total_Sold desc;
 
 
 -- color ranking --
-
-
 select
 	color,
 	count(color) Total_sold
