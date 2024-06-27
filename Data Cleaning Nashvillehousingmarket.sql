@@ -177,4 +177,23 @@ drop column
 select* from 
 nashvillehousingmarket
 
+---------------------------------------------------------------------------------------------------------
+-- Change Res Land to Residential Land
+
+Select
+	distinct(landuse)
+from nashvillehousingmarket
+order by landuse desc
+
+
+create view Land_Use as
+select
+	case 
+		when landuse = 'vacant res land' then 'VACANT RESIDENTIAL LAND'
+		when landuse = 'vacant resiential land' then 'VACANT RESIDENTIAL LAND'
+		else landuse end as LandUse
+from nashvillehousingmarket
+group by landuse
+order by Landuse desc;
+
 
