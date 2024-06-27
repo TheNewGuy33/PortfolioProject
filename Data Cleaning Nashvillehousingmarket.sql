@@ -197,3 +197,17 @@ group by landuse
 order by Landuse desc;
 
 
+
+alter table nashvillehousingmarket
+add Land_Use nvarchar(50)
+
+
+update nashvillehousingmarket
+set Land_Use = 
+	case 
+		when landuse = 'vacant res land' then 'VACANT RESIDENTIAL LAND'
+		when landuse = 'vacant resiential land' then 'VACANT RESIDENTIAL LAND'
+		else landuse end --as LandUse
+from nashvillehousingmarket
+
+
