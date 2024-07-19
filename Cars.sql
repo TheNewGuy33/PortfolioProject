@@ -6,7 +6,14 @@
 -- Select All Car Data --
 select* from cars;
 
+-- COUNT AUTOMATIC CARS VS MANUAL CARS VS UNKNOWN --
 
+select
+	count(case when transmission = 'automatic' then 'automatic' end) as Automatic_Transmission,
+	count(case when transmission = 'manual' then 'manual' end) as Manual_Transmission,
+	count(case when transmission != 'manual' and transmission != 'automatic' then 'manual' end) as Unknown_Transmission
+from cars
+where transmission is not null;
 
 
 -- Total Cars Sold --
