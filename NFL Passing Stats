@@ -1,0 +1,31 @@
+-- SELECT EVERYTHING --
+
+select* from nfl_passing;
+
+
+
+-- STATS BY TEAMNAME --
+
+select
+Teamname,
+sum(completions) as Total_Completions,
+sum(yards) as Total_Yards,
+sum(touchdowns) as Total_TDs,
+sum(interceptions) as Total_Ints,
+sum(first_downs) as Total_FirstDowns
+from nfl_passing
+where team != '2tm' and team != '3tm'
+group by teamname
+order by Total_Yards desc;
+
+
+
+-- TEAMS WITH MOST QBS --
+
+select
+teamname,
+count(teamname)
+from nfl_passing
+where team != '2tm' and team != '3tm'
+group by team;
+
