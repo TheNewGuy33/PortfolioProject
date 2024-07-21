@@ -27,5 +27,5 @@ teamname,
 count(teamname)
 from nfl_passing
 where team != '2tm' and team != '3tm'
-group by team;
+group by teamname;
 
