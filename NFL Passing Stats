@@ -98,22 +98,23 @@ order by TD_INT_Ratio desc;
 
 -- COMPLETIONS PERCENTAGE --
 
-with completion_percentage as
+with stats as
+
 (select
-TEAMNAME,
-sum(completions) as COMPLETIONS,
-sum(attempts) AS ATTEMPTS
+	TeamName,
+	sum(completions) as Completions,
+	sum(attempts) as Attempts
 from nfl_passing
 where teamname is not null
 group by teamname)
 
 select
-	TEAMNAME,
-	coalesce(completions,0) as COMPLETIONS,
-	coalesce(attempts,0) as ATTEMPTS,
-	round(case	
+	TeamName,
+	coalesce(Completions,0) as Completions,
+	coalesce(Attempts,0) as Attempts,
+	round(case
 		when coalesce(attempts,0) > 0
-		then (coalesce(completions, 0) * 100/ coalesce(attempts,1))
-		else 0 end,2) as COMPLETIONPERCENTAGE
-from completion_percentage
-order by TEAMNAME asc;
+		then coalesce(completions,0)/ coalesce(attempts,0) *100 end,2) as Completion_Percentage
+from stats
+where teamname is not null
+group by teamname, completions, attempts;
