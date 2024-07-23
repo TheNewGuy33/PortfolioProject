@@ -1,18 +1,18 @@
 -- SELECT EVERYTHING --
 
-select* from nfl_passing;
+select* from nfl_passing
 
 
 
 -- STATS BY TEAMNAME --
 
 select
-Teamname,
-sum(completions) as Total_Completions,
-sum(yards) as Total_Yards,
-sum(touchdowns) as Total_TDs,
-sum(interceptions) as Total_Ints,
-sum(first_downs) as Total_FirstDowns
+TEAMNAME,
+sum(completions) as TOTAL_COMPLETIONS,
+sum(yards) as TOTAL_YARDS,
+sum(touchdowns) as TOTAL_TDS,
+sum(interceptions) as TOTAL_INTS,
+sum(first_downs) as TOTAL_FIRSTDOWNS
 from nfl_passing
 where team != '2tm' and team != '3tm'
 group by teamname
@@ -20,12 +20,100 @@ order by Total_Yards desc;
 
 
 
--- TEAMS WITH MOST QBS --
+-- TEAMS QB COUNT --
+
+with qb_breakdown as
+(select
+	first_name,
+	last_name,
+	teamname
+from nfl_passing
+where attempts > 10
+group by
+	first_name, 
+	last_name, 
+	teamname)
 
 select
-teamname,
-count(teamname)
-from nfl_passing
-where team != '2tm' and team != '3tm'
-group by teamname;
+	TEAMNAME,
+	count(teamname) QB_COUNT
+from qb_breakdown
+where teamname is not null
+group by Teamname
+order by teamname asc;
 
+
+
+-- LONGEST COMPLETION BY TEAM --
+
+with longest_team_passing as
+(select
+	Teamname,
+	max(long) as Longest_Pass
+from nfl_passing
+where teamname is not null
+group by teamname)
+
+select
+	nfl_passing.FIRST_NAME,
+	nfl_passing.LAST_NAME,
+	longest_team_passing.TEAMNAME,
+	longest_team_passing.LONGEST_PASS,
+	nfl_passing.YEAR
+from longest_team_passing
+join nfl_passing
+on longest_team_passing.teamname = nfl_passing.teamname and longest_team_passing.longest_pass = nfl_passing.long
+order by longest_pass desc;
+
+
+
+-- TD TO INT RATIO --
+
+with touchdowns_count as
+(select 
+	TeamName,
+	sum(touchdowns) as TouchDowns
+from nfl_passing
+where teamname is not null
+group by teamname),
+
+interceptions_count as
+(select 
+	TeamName,
+	sum(interceptions) as Interceptions
+from nfl_passing
+where teamname is not null
+group by teamname)
+
+select 
+    coalesce(touchdowns_count.TeamName, interceptions_count.TeamName) as TEAMNAME,
+    coalesce(touchdowns_count.Touchdowns,0) as TOUCHDOWNS,
+    coalesce(interceptions_count.Interceptions,0) as INTERCEPTIONS,
+	round((Touchdowns/interceptions),3) as TD_INT_RATIO
+from touchdowns_count 
+full outer join interceptions_count on touchdowns_count.TeamName = interceptions_count.TeamName
+order by TD_INT_Ratio desc;
+
+
+
+-- COMPLETIONS PERCENTAGE --
+
+with completion_percentage as
+(select
+TEAMNAME,
+sum(completions) as COMPLETIONS,
+sum(attempts) AS ATTEMPTS
+from nfl_passing
+where teamname is not null
+group by teamname)
+
+select
+	TEAMNAME,
+	coalesce(completions,0) as COMPLETIONS,
+	coalesce(attempts,0) as ATTEMPTS,
+	round(case	
+		when coalesce(attempts,0) > 0
+		then (coalesce(completions, 0) * 100/ coalesce(attempts,1))
+		else 0 end,2) as COMPLETIONPERCENTAGE
+from completion_percentage
+order by TEAMNAME asc;
