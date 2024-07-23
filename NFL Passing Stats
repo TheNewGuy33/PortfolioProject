@@ -99,7 +99,6 @@ order by TD_INT_Ratio desc;
 -- COMPLETIONS PERCENTAGE --
 
 with stats as
-
 (select
 	TeamName,
 	sum(completions) as Completions,
