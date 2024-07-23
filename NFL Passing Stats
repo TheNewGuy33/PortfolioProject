@@ -1,3 +1,8 @@
+
+							-- NFL Passing Stats (Previous 10 Years) --
+					-- Skills Used: Joins, CTE's, Windows Functions, Aggregate Functions, Creating Views --
+
+
 -- SELECT EVERYTHING --
 
 select* from nfl_passing
@@ -108,12 +113,148 @@ where teamname is not null
 group by teamname)
 
 select
-	TeamName,
-	coalesce(Completions,0) as Completions,
-	coalesce(Attempts,0) as Attempts,
+	TEAMNAME,
+	coalesce(Completions,0) as COMPLETIONS,
+	coalesce(Attempts,0) as ATTEMPTS,
 	round(case
 		when coalesce(attempts,0) > 0
-		then coalesce(completions,0)/ coalesce(attempts,0) *100 end,2) as Completion_Percentage
+		then coalesce(completions,0)/ coalesce(attempts,0) *100 end,2) as COMPLETION_PERCENTAGE
+from stats
+where teamname is not null
+group by teamname, completions, attempts;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+											-- CREATING VIEWS --
+
+-- STATS BY TEAMNAME --
+
+Create view Team_Stats as
+
+select
+TEAMNAME,
+sum(completions) as TOTAL_COMPLETIONS,
+sum(yards) as TOTAL_YARDS,
+sum(touchdowns) as TOTAL_TDS,
+sum(interceptions) as TOTAL_INTS,
+sum(first_downs) as TOTAL_FIRSTDOWNS
+from nfl_passing
+where team != '2tm' and team != '3tm'
+group by teamname;
+
+
+
+-- TEAMS QB COUNT --
+
+Create view QB_Count as
+
+with qb_breakdown as
+(select
+	first_name,
+	last_name,
+	teamname
+from nfl_passing
+where attempts > 10
+group by
+	first_name, 
+	last_name, 
+	teamname)
+
+select
+	TEAMNAME,
+	count(teamname) QB_COUNT
+from qb_breakdown
+where teamname is not null
+group by Teamname;
+
+
+
+-- LONGEST COMPLETION BY TEAM --
+
+Create view Longest_Pass as
+
+with longest_team_passing as
+(select
+	Teamname,
+	max(long) as Longest_Pass
+from nfl_passing
+where teamname is not null
+group by teamname)
+
+select
+	nfl_passing.FIRST_NAME,
+	nfl_passing.LAST_NAME,
+	longest_team_passing.TEAMNAME,
+	longest_team_passing.LONGEST_PASS,
+	nfl_passing.YEAR
+from longest_team_passing
+join nfl_passing
+on longest_team_passing.teamname = nfl_passing.teamname and longest_team_passing.longest_pass = nfl_passing.long;
+
+
+
+-- TD TO INT RATIO --
+
+Create view TD_INT_Ratio as
+
+with touchdowns_count as
+(select 
+	TeamName,
+	sum(touchdowns) as TouchDowns
+from nfl_passing
+where teamname is not null
+group by teamname),
+
+interceptions_count as
+(select 
+	TeamName,
+	sum(interceptions) as Interceptions
+from nfl_passing
+where teamname is not null
+group by teamname)
+
+select 
+    coalesce(touchdowns_count.TeamName, interceptions_count.TeamName) as TEAMNAME,
+    coalesce(touchdowns_count.Touchdowns,0) as TOUCHDOWNS,
+    coalesce(interceptions_count.Interceptions,0) as INTERCEPTIONS,
+	round((Touchdowns/interceptions),3) as TD_INT_RATIO
+from touchdowns_count 
+full outer join interceptions_count on touchdowns_count.TeamName = interceptions_count.TeamName;
+
+
+
+
+-- COMPLETIONS PERCENTAGE --
+
+Create view Completion_Percentage as
+
+with stats as
+(select
+	TeamName,
+	sum(completions) as Completions,
+	sum(attempts) as Attempts
+from nfl_passing
+where teamname is not null
+group by teamname)
+
+select
+	TEAMNAME,
+	coalesce(Completions,0) as COMPLETIONS,
+	coalesce(Attempts,0) as ATTEMPTS,
+	round(case
+		when coalesce(attempts,0) > 0
+		then coalesce(completions,0)/ coalesce(attempts,0) *100 end,2) as COMPLETION_PERCENTAGE
 from stats
 where teamname is not null
 group by teamname, completions, attempts;
