@@ -1,0 +1,75 @@
+CREATE TABLE CUSTOMERS (
+    Customer_ID INT PRIMARY KEY,
+    Company_Name VARCHAR(30) NOT NULL,
+    Contact_Name VARCHAR(30) NOT NULL,
+    Contact_Title VARCHAR(30) NOT NULL,
+    Address VARCHAR(30) NOT NULL,
+    City VARCHAR(30) NOT NULL,
+    State CHAR(20) NOT NULL,
+    Zip_Code CHAR(5) NOT NULL
+);
+
+CREATE TABLE EMPLOYEES (
+    Employee_ID INT PRIMARY KEY,
+    Last_Name VARCHAR(30) NOT NULL,
+    First_Name VARCHAR(30) NOT NULL,
+    Title VARCHAR(30) NOT NULL,
+    Hiring_Date DATE NOT NULL
+);
+
+CREATE TABLE ORDERS (
+    Order_ID INT PRIMARY KEY,
+    Customer_ID INT NOT NULL,
+    Employee_ID INT NOT NULL,
+    Order_Date DATE NOT NULL,
+    Shipped_Date DATE NOT NULL,
+    Ship_Address VARCHAR(30) NOT NULL,
+    Ship_City VARCHAR(30) NOT NULL,
+    Ship_State CHAR(2) NOT NULL,
+    Ship_Zip_Code CHAR(5) NOT NULL,
+    FOREIGN KEY (Customer_ID) REFERENCES CUSTOMERS(Customer_ID),
+    FOREIGN KEY (Employee_ID) REFERENCES EMPLOYEES(Employee_ID)
+);
+
+CREATE TABLE CATEGORIES (
+    Category_ID INT PRIMARY KEY,
+    Category_Name VARCHAR(30),
+    Description VARCHAR(30)
+);
+
+
+CREATE TABLE SUPPLIERS (
+    Supplier_ID INT PRIMARY KEY,
+    Company_Name VARCHAR(30) NOT NULL,
+    Address VARCHAR(30) NOT NULL,
+    City VARCHAR(30) NOT NULL,
+    State VARCHAR(30) NOT NULL,
+    Zip_Code CHAR(5) NOT NULL
+);
+
+
+
+
+CREATE TABLE PRODUCTS (
+    Product_ID INT PRIMARY KEY,
+    Product_Name VARCHAR(30) NOT NULL,
+    Supplier_ID INT NOT NULL,
+    Category_ID INT NOT NULL,
+    Quantity_Per_Unit INT NOT NULL,
+    Unit_Price DECIMAL(5,2),
+    FOREIGN KEY (Supplier_ID) REFERENCES SUPPLIERS(Supplier_ID),
+    FOREIGN KEY (Category_ID) REFERENCES CATEGORIES(Category_ID)
+);
+
+
+CREATE TABLE ORDER_ITEMS (
+    Order_ID INT NOT NULL,
+    Product_ID INT NOT NULL,
+    Unit_Price DECIMAL(10,2),
+    Quantity INT,
+    PRIMARY KEY (Order_ID, Product_ID),
+    FOREIGN KEY (Order_ID) REFERENCES ORDERS(Order_ID),
+    FOREIGN KEY (Product_ID) REFERENCES PRODUCTS(Product_ID)
+);
+
+
