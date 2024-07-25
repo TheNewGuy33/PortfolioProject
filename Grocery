@@ -6,7 +6,7 @@ CREATE TABLE CUSTOMERS (
     Contact_Title VARCHAR(30) NOT NULL,
     Address VARCHAR(30) NOT NULL,
     City VARCHAR(30) NOT NULL,
-    State CHAR(20) NOT NULL,
+    State CHAR(2) NOT NULL,
     Zip_Code CHAR(5) NOT NULL
 );
 
