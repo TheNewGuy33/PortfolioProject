@@ -1,7 +1,8 @@
 CREATE TABLE CUSTOMERS (
     Customer_ID INT PRIMARY KEY,
     Company_Name VARCHAR(30) NOT NULL,
-    Contact_Name VARCHAR(30) NOT NULL,
+    Contact_First_Name VARCHAR(30) NOT NULL,
+    Contact_Last_Name VARCHAR(30) NOT NULL,
     Contact_Title VARCHAR(30) NOT NULL,
     Address VARCHAR(30) NOT NULL,
     City VARCHAR(30) NOT NULL,
