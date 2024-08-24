@@ -1,16 +1,20 @@
+-- NFL Passing Stats (Previous 10 Years) --
 
-							-- NFL Passing Stats (Previous 10 Years) --
-
-					-- Skills Used: Joins, CTE's, Windows Functions, Aggregate Functions, Creating Views --
-
-
--- SELECT EVERYTHING --
-
-select* from nfl_passing
+-- Skills Used: Joins, CTE's, Windows Functions, Aggregate Functions, Creating Views --
 
 
 
--- STATS BY TEAMNAME --
+
+
+-- SELECT ALL DATA --
+
+select* from [dbo].[NFL_PASSING];
+
+
+
+
+
+-- SUM TEAM STATS (10 YEARS) --
 
 select
 TEAMNAME,
@@ -23,6 +27,46 @@ from nfl_passing
 where team != '2tm' and team != '3tm'
 group by teamname
 order by Total_Yards desc;
+
+
+
+
+
+			-- QB INT STATS --
+-- YEAR/ FN/ LN/ INT/ TTL INT/ PCNT INT -- 
+
+select
+	Year,
+	First_Name,
+	Last_Name,
+	Interceptions, 
+	sum(interceptions) over(order by year) Total_League_Interceptions,
+	round(Interceptions / sum(interceptions) over(order by year)*100,3) as Percent_to_League_Interceptions
+from [dbo].[NFL_PASSING]
+where year = 2022
+and interceptions > 0
+order by Percent_to_League_Interceptions desc
+
+
+
+
+
+			-- QB TD STATS --
+-- YEAR/ FN/ LN/ INT/ TTL INT/ PCNT INT -- 
+
+select
+	Year,
+	First_Name,
+	Last_Name,
+	TouchDowns, 
+	sum(TouchDowns) over(order by year) Total_League_TouchDowns,
+	round(TouchDowns / sum(TouchDowns) over(order by year)*100,3) as Percent_to_League_TouchDowns
+from [dbo].[NFL_PASSING]
+where year = 2022
+and TouchDowns > 0
+order by Percent_to_League_TouchDowns desc
+
+
 
 
 
@@ -50,6 +94,8 @@ order by teamname asc;
 
 
 
+
+
 -- LONGEST COMPLETION BY TEAM --
 
 with longest_team_passing as
@@ -70,6 +116,8 @@ from longest_team_passing
 join nfl_passing
 on longest_team_passing.teamname = nfl_passing.teamname and longest_team_passing.longest_pass = nfl_passing.long
 order by longest_pass desc;
+
+
 
 
 
@@ -99,6 +147,8 @@ select
 from touchdowns_count 
 full outer join interceptions_count on touchdowns_count.TeamName = interceptions_count.TeamName
 order by TD_INT_Ratio desc;
+
+
 
 
 
@@ -137,7 +187,29 @@ group by teamname, completions, attempts;
 
 
 
-											-- CREATING VIEWS --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	-- CREATING VIEWS --
 
 -- STATS BY TEAMNAME --
 
@@ -153,6 +225,8 @@ sum(first_downs) as TOTAL_FIRSTDOWNS
 from nfl_passing
 where team != '2tm' and team != '3tm'
 group by teamname;
+
+
 
 
 
@@ -181,6 +255,8 @@ group by Teamname;
 
 
 
+
+
 -- LONGEST COMPLETION BY TEAM --
 
 Create view Longest_Pass as
@@ -202,6 +278,8 @@ select
 from longest_team_passing
 join nfl_passing
 on longest_team_passing.teamname = nfl_passing.teamname and longest_team_passing.longest_pass = nfl_passing.long;
+
+
 
 
 
@@ -232,6 +310,7 @@ select
 	round((Touchdowns/interceptions),3) as TD_INT_RATIO
 from touchdowns_count 
 full outer join interceptions_count on touchdowns_count.TeamName = interceptions_count.TeamName;
+
 
 
 
