@@ -26,7 +26,6 @@ where continent is not null
 order by 1,2;
 
 
-
 -- Total Cases vs Population --
 -- Likelihood of dying if contract covid in country --
 
