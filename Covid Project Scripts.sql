@@ -12,7 +12,6 @@ select* from covidvaccinations
 order by 3,4;
 
 
-
 -- Select data we are starting with --
 
 select
